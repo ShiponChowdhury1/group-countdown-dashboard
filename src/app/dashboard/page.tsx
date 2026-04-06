@@ -1,0 +1,56 @@
+"use client";
+
+import { useState } from "react";
+import SubscriptionGrowthChart from "@/app/_components/charts/subscription-growth-chart";
+import UserGrowthChart from "@/app/_components/charts/user-growth-chart";
+import StatCard from "@/app/_components/dashboard/stat-card";
+import TopNav from "@/app/_components/dashboard/top-nav";
+import AdminSidebar from "@/app/_components/sidebar/admin-sidebar";
+import { statsCards } from "@/data/dashboard";
+
+export default function DashboardPage() {
+	const [activeNav, setActiveNav] = useState("Dashboard");
+
+	return (
+		<div className="min-h-screen bg-[#F9FAFB]">
+			<AdminSidebar activeNav={activeNav} onChangeNav={setActiveNav} />
+
+			<main className="min-h-screen pb-10 lg:pl-58.75">
+				<TopNav />
+
+				<div className="px-6 pt-4">
+					<section className="mt-7">
+						<h1 className="text-[22px] font-bold text-slate-900">Dashboard Overview</h1>
+						<p className="mt-1 text-[18px] font-semibold text-slate-800">Welcome back, Admin</p>
+					</section>
+
+					<section className="mt-7">
+						<article className="overflow-hidden rounded-[14px]">
+							<div className="grid gap-2 xl:grid-cols-5">
+								{statsCards.map((card) => (
+									<StatCard key={card.title} {...card} />
+								))}
+							</div>
+						</article>
+					</section>
+
+					<section className="mt-6 grid gap-6 xl:grid-cols-2">
+						<article className="overflow-hidden rounded-[14px] border border-slate-200 bg-white p-5 shadow-sm">
+							<h2 className="text-[22px] font-semibold text-slate-800">User Growth</h2>
+							<div className="mt-4 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+								<UserGrowthChart />
+							</div>
+						</article>
+
+						<article className="overflow-hidden rounded-[14px] border border-slate-200 bg-white p-5 shadow-sm">
+							<h2 className="text-[22px] font-semibold text-slate-800">Subscription Growth</h2>
+							<div className="mt-4 rounded-xl border border-slate-100 bg-slate-50/50 p-3">
+								<SubscriptionGrowthChart />
+							</div>
+						</article>
+					</section>
+				</div>
+			</main>
+		</div>
+	);
+}
