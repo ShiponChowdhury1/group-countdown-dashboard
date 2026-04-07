@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { LegalDoc } from "./legal-section";
 
 type Props = {
@@ -11,17 +11,9 @@ type Props = {
 };
 
 export default function EditLegalModal({ open, doc, onClose, onUpdate }: Props) {
-  const [policyName, setPolicyName] = useState("");
-  const [effectiveDate, setEffectiveDate] = useState("");
-  const [description, setDescription] = useState("");
-
-  useEffect(() => {
-    if (doc) {
-      setPolicyName(doc.policyName);
-      setEffectiveDate(doc.effectiveDate);
-      setDescription(doc.description);
-    }
-  }, [doc]);
+  const [policyName, setPolicyName] = useState(doc?.policyName ?? "");
+  const [effectiveDate, setEffectiveDate] = useState(doc?.effectiveDate ?? "");
+  const [description, setDescription] = useState(doc?.description ?? "");
 
   if (!open || !doc) return null;
 

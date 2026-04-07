@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import GroupsTable from "./groups-table";
-import DeleteModal from "../users/delete-modal";
+import GroupsTable from "@/app/_components/dashboard/groups/groups-table";
+import DeleteModal from "@/app/_components/dashboard/users/delete-modal";
 
 export type Group = {
   id: string;
@@ -38,7 +38,7 @@ export default function GroupsPage() {
         <section className="mt-6">
           <GroupsTable
             groups={paginated}
-            onDelete={(id) => setDeleteModal({ open: true, groupId: id })}
+            onDelete={(id: string) => setDeleteModal({ open: true, groupId: id })}
           />
 
           <div className="mt-4 flex items-center justify-end gap-1">

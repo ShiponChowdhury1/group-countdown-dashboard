@@ -69,7 +69,7 @@ export default function AdminSidebar({
 					<button
 						type="button"
 						onClick={() => setLogoutModal(true)}
-						className="mx-auto mt-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] pt-2.5 pr-2.5 pb-2.5 pl-4 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+						className="mx-auto mt-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] border border-slate-200 bg-slate-50 pt-2.5 pr-2.5 pb-2.5 pl-4 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100"
 					>
 						<span className="text-slate-500">{getLogoutIcon()}</span>
 						<span>Logout</span>

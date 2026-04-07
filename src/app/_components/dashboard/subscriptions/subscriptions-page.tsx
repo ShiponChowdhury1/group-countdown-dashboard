@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import PlanCard from "./plan-card";
+import PlanCard from "@/app/_components/dashboard/subscriptions/plan-card";
 import EditPricingModal from "./edit-pricing-modal";
-import SuccessModal from "./success-modal";
-import SubscribersTable from "./subscribers-table";
+import SuccessModal from "@/app/_components/dashboard/subscriptions/success-modal";
+import SubscribersTable from "@/app/_components/dashboard/subscriptions/subscribers-table";
 
 export type Plan = {
   id: "free" | "premium";

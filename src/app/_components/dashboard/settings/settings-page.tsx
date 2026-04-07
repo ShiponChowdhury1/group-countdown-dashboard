@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import PersonalDetails from "./personal-details";
-import ChangePassword from "./change-password";
-import LegalSection from "./legal-section";
-import SuccessModal from "./settings-success-modal";
+import PersonalDetails from "@/app/_components/dashboard/settings/personal-details";
+import ChangePassword from "@/app/_components/dashboard/settings/change-password";
+import LegalSection from "@/app/_components/dashboard/settings/legal-section";
+import SuccessModal from "@/app/_components/dashboard/settings/settings-success-modal";
 
 export default function SettingsPage() {
   const [successModal, setSuccessModal] = useState(false);

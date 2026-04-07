@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import ViewLegalModal from "./view-legal-modal";
-import EditLegalModal from "./edit-legal-modal";
+import ViewLegalModal from "@/app/_components/dashboard/settings/view-legal-modal";
+import EditLegalModal from "@/app/_components/dashboard/settings/edit-legal-modal";
 
 export type LegalDoc = {
   id: string;
@@ -100,7 +100,10 @@ export default function LegalSection() {
         open={viewModal.open}
         doc={viewModal.doc}
         onClose={() => setViewModal({ open: false, doc: null })}
-        onEdit={(doc) => { setViewModal({ open: false, doc: null }); setEditModal({ open: true, doc }); }}
+        onEdit={(doc: LegalDoc) => {
+          setViewModal({ open: false, doc: null });
+          setEditModal({ open: true, doc });
+        }}
       />
       <EditLegalModal
         open={editModal.open}

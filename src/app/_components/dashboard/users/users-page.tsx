@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import UsersTable from "./users-table";
-import DeleteModal from "./delete-modal";
-import SuspendModal from "./suspend-modal";
-import UserDetailsModal from "./user-details-modal";
+import UsersTable from "@/app/_components/dashboard/users/users-table";
+import DeleteModal from "@/app/_components/dashboard/users/delete-modal";
+import SuspendModal from "@/app/_components/dashboard/users/suspend-modal";
+import UserDetailsModal from "@/app/_components/dashboard/users/user-details-modal";
 import { usersData } from "@/data/users";
 
 export type User = {
@@ -40,7 +40,6 @@ export default function UsersPage() {
   };
 
   const selectedUser = users.find((u) => u.id === detailsModal.userId) ?? null;
-  const suspendUser = users.find((u) => u.id === suspendModal.userId) ?? null;
 
   return (
     <>
