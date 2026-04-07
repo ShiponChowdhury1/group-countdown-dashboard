@@ -2,7 +2,11 @@
 
 import { useState, useRef, useEffect } from 'react';
 
-export default function TopNav() {
+type TopNavProps = {
+	onMenuClick: () => void;
+};
+
+export default function TopNav({ onMenuClick }: TopNavProps) {
 	const [isOpen, setIsOpen] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -20,8 +24,21 @@ export default function TopNav() {
 	return (
 		<header className="h-20 w-full border-b border-[#E5E7EB] bg-[#FFFFFF]">
 			<div
-				className="flex h-full w-full items-center justify-end pr-6"
+				className="flex h-full w-full items-center justify-between px-4 lg:justify-end lg:pr-6"
 			>
+				<button
+					type="button"
+					onClick={onMenuClick}
+					className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
+					aria-label="Toggle sidebar"
+				>
+					<svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+						<line x1="3" y1="6" x2="21" y2="6" />
+						<line x1="3" y1="12" x2="21" y2="12" />
+						<line x1="3" y1="18" x2="21" y2="18" />
+					</svg>
+				</button>
+
 				<div className="flex items-center gap-3 rounded-full bg-white px-3 py-2">
 					<button
 						type="button"

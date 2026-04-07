@@ -3,54 +3,73 @@ import { navItems } from "@/data/dashboard";
 type AdminSidebarProps = {
 	activeNav: string;
 	onChangeNav: (label: string) => void;
+	isOpen: boolean;
+	onClose: () => void;
 };
 
 export default function AdminSidebar({
 	activeNav,
 	onChangeNav,
+	isOpen,
+	onClose,
 }: AdminSidebarProps) {
 	return (
-		<aside className="fixed inset-y-0 left-0 z-30 hidden w-58.75 border-r border-slate-200 bg-white py-6 lg:flex lg:flex-col lg:justify-between">
-			<div className="flex h-full flex-col">
-				<div className="mb-8 px-4">
-					<h2 className="text-lg font-bold leading-tight text-blue-500">
-						Task Manager
-					</h2>
-					<p className="text-xs text-slate-400">Admin Dashboard</p>
-				</div>
-
-				<nav className="flex flex-col gap-1">
-					{navItems.map((item) => {
-						const isActive = activeNav === item.label;
-						return (
-						<button
-							key={item.label}
-							type="button"
-							onClick={() => onChangeNav(item.label)}
-							className={`mx-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] pt-2.5 pr-2.5 pb-2.5 pl-4 text-left text-sm font-medium transition-colors ${
-								isActive
-									? "bg-blue-500 text-white"
-									: "text-slate-600 hover:bg-slate-100"
-							}`}
-						>
-							<span className={isActive ? "text-white" : "text-slate-500"}>
-								{getSidebarIcon(item.iconKey)}
-							</span>
-							<span>{item.label}</span>
-						</button>
-						);
-					})}
-				</nav>
-
+		<>
+			{isOpen && (
 				<button
 					type="button"
-					className="mx-auto mt-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] pt-2.5 pr-2.5 pb-2.5 pl-4 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
-				>
-					<span className="text-slate-500">{getLogoutIcon()}</span>
-					<span>Logout</span>
-				</button>
-			</div>
-		</aside>
+					onClick={onClose}
+					className="fixed inset-0 z-30 bg-black/30 lg:hidden"
+					aria-label="Close sidebar overlay"
+				/>
+			)}
+
+			<aside
+				className={`fixed inset-y-0 left-0 z-40 flex w-58.75 flex-col justify-between border-r border-slate-200 bg-white py-6 transition-transform duration-200 lg:z-30 lg:translate-x-0 ${
+					isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+				}`}
+			>
+				<div className="flex h-full flex-col">
+					<div className="mb-8 px-4">
+						<h2 className="text-lg font-bold leading-tight text-blue-500">
+							Task Manager
+						</h2>
+						<p className="text-xs text-slate-400">Admin Dashboard</p>
+					</div>
+
+					<nav className="flex flex-col gap-1">
+						{navItems.map((item) => {
+							const isActive = activeNav === item.label;
+							return (
+							<button
+								key={item.label}
+								type="button"
+								onClick={() => onChangeNav(item.label)}
+								className={`mx-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] pt-2.5 pr-2.5 pb-2.5 pl-4 text-left text-sm font-medium transition-colors ${
+									isActive
+										? "bg-blue-500 text-white"
+										: "text-slate-600 hover:bg-slate-100"
+								}`}
+							>
+								<span className={isActive ? "text-white" : "text-slate-500"}>
+									{getSidebarIcon(item.iconKey)}
+								</span>
+								<span>{item.label}</span>
+							</button>
+							);
+						})}
+					</nav>
+
+					<button
+						type="button"
+						className="mx-auto mt-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] pt-2.5 pr-2.5 pb-2.5 pl-4 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
+					>
+						<span className="text-slate-500">{getLogoutIcon()}</span>
+						<span>Logout</span>
+					</button>
+				</div>
+			</aside>
+		</>
 	);
 }
 
