@@ -1,13 +1,16 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import LogoutModal from "@/app/_components/dashboard/logout/logout-modal";
 
 type TopNavProps = {
 	onMenuClick: () => void;
+	onProfileNavigate: () => void;
 };
 
-export default function TopNav({ onMenuClick }: TopNavProps) {
+export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) {
 	const [isOpen, setIsOpen] = useState(false);
+	const [logoutModal, setLogoutModal] = useState(false);
 	const dropdownRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
@@ -54,13 +57,16 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 					<div className="relative" ref={dropdownRef}>
 						<button
 							onClick={() => setIsOpen(!isOpen)}
-							className="flex items-center gap-3 rounded-full hover:bg-slate-50 px-3 py-2 cursor-pointer"
+							className="flex items-center gap-2 rounded-full px-3 py-2 cursor-pointer hover:bg-slate-50"
 						>
 							<div className="h-10 w-10 rounded-full bg-slate-300" />
-							<div className="ml-1 leading-tight">
+							<div className="ml-1 leading-tight text-left">
 								<p className="text-sm font-semibold text-slate-800">Admin Angela</p>
 								<p className="text-xs text-slate-500">admin@gmail.com</p>
 							</div>
+							<svg viewBox="0 0 24 24" className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+								<path d="m6 9 6 6 6-6" />
+							</svg>
 						</button>
 
 						{isOpen && (
@@ -77,7 +83,10 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 
 								<div className="p-4 space-y-3">
 									<button
-										onClick={() => setIsOpen(false)}
+										onClick={() => {
+										setIsOpen(false);
+										onProfileNavigate();
+									}}
 										className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg transition"
 									>
 										<svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
@@ -87,7 +96,10 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 									</button>
 
 									<button
-										onClick={() => setIsOpen(false)}
+									onClick={() => {
+										setIsOpen(false);
+										onProfileNavigate();
+									}}
 										className="w-full flex items-center gap-3 px-4 py-3 text-slate-700 hover:bg-slate-50 rounded-lg transition"
 									>
 										<svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
@@ -97,7 +109,10 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 									</button>
 
 									<button
-										onClick={() => setIsOpen(false)}
+										onClick={() => {
+											setIsOpen(false);
+											setLogoutModal(true);
+										}}
 										className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg transition"
 									>
 										<svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
@@ -111,6 +126,15 @@ export default function TopNav({ onMenuClick }: TopNavProps) {
 					</div>
 				</div>
 			</div>
+
+			<LogoutModal
+				open={logoutModal}
+				onClose={() => setLogoutModal(false)}
+				onConfirm={() => {
+					setLogoutModal(false);
+					// logout logic — e.g. router.push("/login")
+				}}
+			/>
 		</header>
 	);
 }

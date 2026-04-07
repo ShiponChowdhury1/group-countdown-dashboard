@@ -30,7 +30,10 @@ export default function DashboardPage() {
 			/>
 
 			<main className="min-h-screen pb-10 lg:pl-58.75">
-				<TopNav onMenuClick={() => setIsSidebarOpen((prev) => !prev)} />
+				<TopNav
+					onMenuClick={() => setIsSidebarOpen((prev) => !prev)}
+					onProfileNavigate={() => setActiveNav("Settings")}
+				/>
 
 				{activeNav === "Users" && <UsersPage />}
 				{activeNav === "Groups" && <GroupsPage />}

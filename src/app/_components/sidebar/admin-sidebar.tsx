@@ -1,4 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import { navItems } from "@/data/dashboard";
+import LogoutModal from "@/app/_components/dashboard/logout/logout-modal";
 
 type AdminSidebarProps = {
 	activeNav: string;
@@ -13,6 +17,8 @@ export default function AdminSidebar({
 	isOpen,
 	onClose,
 }: AdminSidebarProps) {
+	const [logoutModal, setLogoutModal] = useState(false);
+
 	return (
 		<>
 			{isOpen && (
@@ -62,6 +68,7 @@ export default function AdminSidebar({
 
 					<button
 						type="button"
+						onClick={() => setLogoutModal(true)}
 						className="mx-auto mt-auto flex h-12 w-55.75 items-center gap-2.5 rounded-[10px] pt-2.5 pr-2.5 pb-2.5 pl-4 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100"
 					>
 						<span className="text-slate-500">{getLogoutIcon()}</span>
@@ -69,6 +76,15 @@ export default function AdminSidebar({
 					</button>
 				</div>
 			</aside>
+
+			<LogoutModal
+				open={logoutModal}
+				onClose={() => setLogoutModal(false)}
+				onConfirm={() => {
+					setLogoutModal(false);
+					// logout logic — e.g. router.push("/login")
+				}}
+			/>
 		</>
 	);
 }

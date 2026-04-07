@@ -13,7 +13,7 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
-  title: "Auth UI Kit",
+  title: "Group Countdown",
   description: "Modern authentication screens for admin access.",
 };
 
