@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ChevronRight } from "lucide-react";
 
 export type Notification = {
   id: string;
@@ -24,8 +25,9 @@ const notificationsData: Notification[] = [
 
 export default function NotificationsPage() {
   const [currentPage, setCurrentPage] = useState(1);
-  const totalPages = Math.ceil(notificationsData.length / ITEMS_PER_PAGE);
-  const paginated = notificationsData.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(notificationsData.length / ITEMS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginated = notificationsData.slice((safeCurrentPage - 1) * ITEMS_PER_PAGE, safeCurrentPage * ITEMS_PER_PAGE);
 
   return (
     <div className="px-4 sm:px-6 pt-4">
@@ -51,7 +53,7 @@ export default function NotificationsPage() {
                 }`}
               >
                 {/* Unread dot */}
-                <div className="mt-1.5 flex-shrink-0">
+                <div className="mt-1.5 shrink-0">
                   <span className={`block h-2 w-2 rounded-full ${n.unread ? "bg-blue-500" : "bg-slate-200"}`} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -62,45 +64,53 @@ export default function NotificationsPage() {
                   <p className="mt-1 text-xs text-slate-400">{n.timeAgo}</p>
                 </div>
                 {/* Hover chevron */}
-                <div className="flex-shrink-0 self-center text-slate-300 opacity-0 transition-opacity group-hover:opacity-100">
-                  <ChevronRightIcon />
+                <div className="shrink-0 self-center text-slate-300 opacity-0 transition-opacity group-hover:opacity-100">
+                  <ChevronRight className="h-4 w-4" strokeWidth={2} />
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        <div className="mt-4 flex items-center justify-end gap-1">
-          {getPageNumbers(currentPage, totalPages).map((p, i) =>
-            p === "..." ? (
-              <span key={`dots-${i}`} className="px-2 text-slate-400">...</span>
-            ) : (
+        <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+          <button
+            type="button"
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            disabled={safeCurrentPage === 1}
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Previous
+          </button>
+
+          {Array.from({ length: totalPages }, (_, index) => {
+            const page = index + 1;
+            const isActive = page === safeCurrentPage;
+            return (
               <button
-                key={p}
-                onClick={() => setCurrentPage(Number(p))}
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
-                  currentPage === p ? "bg-blue-500 text-white" : "text-slate-600 hover:bg-slate-100"
+                key={page}
+                type="button"
+                onClick={() => setCurrentPage(page)}
+                className={`h-9 min-w-9 rounded-lg border px-3 text-sm font-semibold transition ${
+                  isActive
+                    ? "border-blue-500 bg-blue-500 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                 }`}
               >
-                {p}
+                {page}
               </button>
-            )
-          )}
+            );
+          })}
+
+          <button
+            type="button"
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            disabled={safeCurrentPage === totalPages}
+            className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            Next
+          </button>
         </div>
       </section>
     </div>
   );
-}
-
-function ChevronRightIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="m9 18 6-6-6-6" />
-    </svg>
-  );
-}
-
-function getPageNumbers(current: number, total: number): (number | "...")[] {
-  if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-  return [1, 2, 3, "...", total - 1, total];
 }

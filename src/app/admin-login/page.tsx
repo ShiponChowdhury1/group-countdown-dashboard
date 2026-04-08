@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   AuthCard,
   AuthPage,
@@ -13,7 +14,24 @@ import {
 } from "@/app/_components/auth-shell";
 
 export default function AdminLoginPage() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+
+  const handleLogin = () => {
+    const isValidUser = email.trim().toLowerCase() === "shipon@gmail.com";
+    const isValidPassword = password === "123456";
+
+    if (isValidUser && isValidPassword) {
+      setError("");
+      router.push("/dashboard");
+      return;
+    }
+
+    setError("Invalid credentials. Use shipon@gmail.com / 123456 for testing.");
+  };
 
   return (
     <AuthPage>
@@ -26,15 +44,19 @@ export default function AdminLoginPage() {
             id="email"
             label="Email"
             type="email"
-            placeholder="admin@example.com"
+            placeholder="shipon@gmail.com"
             leftElement={<MailIcon />}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <FormField
             id="password"
             label="Password"
             type={showPassword ? "text" : "password"}
-            placeholder="Enter your password"
+            placeholder="123456"
             leftElement={<LockIcon />}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             rightElement={
               <button
                 type="button"
@@ -46,6 +68,11 @@ export default function AdminLoginPage() {
               </button>
             }
           />
+          {error ? (
+            <p className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-600">
+              {error}
+            </p>
+          ) : null}
           <div className="flex items-center justify-end text-sm">
 
             <Link
@@ -57,6 +84,7 @@ export default function AdminLoginPage() {
           </div>
           <button
             type="button"
+            onClick={handleLogin}
             className="w-full rounded-2xl bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
           >
             Login

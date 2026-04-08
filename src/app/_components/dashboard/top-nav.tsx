@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { Settings, UserRound } from "lucide-react";
+import { Bell, ChevronDown, LogOut, Menu, Settings, UserRound } from "lucide-react";
 import LogoutModal from "@/app/_components/dashboard/logout/logout-modal";
 
 const notificationsData = [
@@ -49,11 +49,7 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
           className="inline-flex h-10 w-10 items-center justify-center rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
           aria-label="Toggle sidebar"
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="3" y1="6" x2="21" y2="6" />
-            <line x1="3" y1="12" x2="21" y2="12" />
-            <line x1="3" y1="18" x2="21" y2="18" />
-          </svg>
+          <Menu className="h-5 w-5" strokeWidth={2} />
         </button>
 
         <div className="flex items-center gap-3 rounded-full bg-white px-3 py-2">
@@ -66,10 +62,7 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
               aria-label="Notifications"
               title="Notifications"
             >
-              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M15 17h5l-1.4-1.4A2 2 0 0 1 18 14.2V11a6 6 0 1 0-12 0v3.2a2 2 0 0 1-.6 1.4L4 17h5" />
-                <path d="M9 17a3 3 0 0 0 6 0" />
-              </svg>
+              <Bell className="h-5 w-5" strokeWidth={2} />
               {unreadCount > 0 && (
                 <span className="absolute -right-1 -top-1 inline-flex min-h-5 min-w-5 items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold leading-none text-white">
                   {unreadCount}
@@ -88,7 +81,7 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
                     </span>
                   )}
                 </div>
-                <div className="max-h-80 divide-y divide-slate-100 overflow-y-auto">
+                <div className="max-h-80 divide-y divide-slate-100 overflow-y-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden">
                   {notificationsData.map((n) => (
                     <div
                       key={n.id}
@@ -133,9 +126,7 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
                 <p className="text-sm font-semibold text-slate-800">Admin Angela</p>
                 <p className="text-xs text-slate-500">admin@gmail.com</p>
               </div>
-              <svg viewBox="0 0 24 24" className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+              <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} strokeWidth={2} aria-hidden="true" />
             </button>
 
             {isOpen && (
@@ -177,11 +168,7 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
                     onClick={() => { setIsOpen(false); setLogoutModal(true); }}
                     className="w-full flex items-center gap-3 px-4 py-3 text-red-500 hover:bg-red-50 rounded-lg transition"
                   >
-                    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                      <path d="m16 17 5-5-5-5" />
-                      <path d="M21 12H9" />
-                    </svg>
+                    <LogOut className="h-5 w-5" strokeWidth={1.8} />
                     <span className="text-sm font-medium">Sign Out</span>
                   </button>
                 </div>

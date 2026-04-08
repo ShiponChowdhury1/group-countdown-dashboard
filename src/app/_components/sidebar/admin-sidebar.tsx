@@ -1,6 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import {
+	Bell,
+	ChevronLeft,
+	ChevronRight,
+	Folder,
+	Grid3X3,
+	LogOut,
+	Settings,
+	Users,
+	WalletCards,
+	X,
+} from "lucide-react";
 import { navItems } from "@/data/dashboard";
 import LogoutModal from "@/app/_components/dashboard/logout/logout-modal";
 
@@ -64,7 +76,7 @@ export default function AdminSidebar({
 						title={toggleLabel}
 						className="group absolute -right-3.5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 lg:inline-flex"
 					>
-						{isCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+						{isCollapsed ? <ChevronRight className="h-5 w-5" strokeWidth={2.2} /> : <ChevronLeft className="h-5 w-5" strokeWidth={2.2} />}
 						<span className="pointer-events-none absolute left-full ml-2 hidden whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 shadow-md transition-opacity group-hover:block group-hover:opacity-100 group-focus-visible:block group-focus-visible:opacity-100">
 							{toggleLabel}
 						</span>
@@ -79,12 +91,12 @@ export default function AdminSidebar({
 							isCollapsed ? "mx-auto" : ""
 						}`}
 					>
-						<CloseIcon />
+						<X className="h-5 w-5" strokeWidth={2} />
 					</button>
 				</div>
 
 				{/* ── Nav items ── */}
-				<nav className="flex flex-1 flex-col gap-1 overflow-y-auto overflow-x-hidden px-2">
+				<nav className="mt-2 flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden px-2">
 					{navItems.map((item) => {
 						const isActive = activeNav === item.label;
 						return (
@@ -93,19 +105,19 @@ export default function AdminSidebar({
 								type="button"
 								onClick={() => onChangeNav(item.label)}
 								title={isCollapsed ? item.label : undefined}
-								className={`group relative flex items-center gap-3 rounded-[10px] transition-all duration-200 ${
+								className={`group relative flex items-center gap-3 rounded-[10px] border transition-all duration-200 ${
 									isCollapsed
 										? "h-11 w-11 justify-center mx-auto"
 										: "h-12 w-full px-4"
 								} ${
 									isActive
-										? "bg-blue-500 text-white"
-										: "text-slate-600 hover:bg-slate-100"
+										? "border-blue-500 bg-blue-500 text-white"
+										: "border-[#D8E3FF] text-[#274690] hover:border-[#B8CCFF] hover:bg-[#EEF4FF]"
 								}`}
 							>
 								<span
 									className={`shrink-0 ${
-										isActive ? "text-white" : "text-slate-500"
+										isActive ? "text-white" : "text-[#4A67A1]"
 									}`}
 								>
 									{getSidebarIcon(item.iconKey)}
@@ -139,7 +151,7 @@ export default function AdminSidebar({
 						}`}
 					>
 						<span className="shrink-0 text-slate-500">
-							<LogoutIcon />
+							<LogOut className="h-5 w-5" strokeWidth={1.8} />
 						</span>
 						{!isCollapsed && (
 							<span className="truncate text-sm font-medium text-slate-700">
@@ -166,89 +178,14 @@ export default function AdminSidebar({
 	);
 }
 
-/* ── Icons ── */
-
-function ChevronLeftIcon() {
-	return (
-		<svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-			<path d="m15 18-6-6 6-6" />
-		</svg>
-	);
-}
-function ChevronRightIcon() {
-	return (
-		<svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-			<path d="m9 18 6-6-6-6" />
-		</svg>
-	);
-}
-function CloseIcon() {
-	return (
-		<svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-			<line x1="18" y1="6" x2="6" y2="18" />
-			<line x1="6" y1="6" x2="18" y2="18" />
-		</svg>
-	);
-}
-function LogoutIcon() {
-	return (
-		<svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-			<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-			<path d="m16 17 5-5-5-5" />
-			<path d="M21 12H9" />
-		</svg>
-	);
-}
-
 function getSidebarIcon(
 	key: "dashboard" | "users" | "groups" | "subscriptions" | "notifications" | "settings"
 ) {
 	const cls = "h-5 w-5";
-	if (key === "dashboard") {
-		return (
-			<svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-				<rect x="3" y="3" width="7" height="7" rx="1.5" />
-				<rect x="14" y="3" width="7" height="7" rx="1.5" />
-				<rect x="3" y="14" width="7" height="7" rx="1.5" />
-				<rect x="14" y="14" width="7" height="7" rx="1.5" />
-			</svg>
-		);
-	}
-	if (key === "users") {
-		return (
-			<svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-				<circle cx="8" cy="8" r="3" /><path d="M2 20a7 7 0 0 1 12 0" />
-				<circle cx="17" cy="8" r="3" /><path d="M13 20a7 7 0 0 1 10 0" />
-			</svg>
-		);
-	}
-	if (key === "groups") {
-		return (
-			<svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-				<path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V7Z" />
-			</svg>
-		);
-	}
-	if (key === "subscriptions") {
-		return (
-			<svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-				<rect x="3" y="6" width="18" height="12" rx="2" />
-				<path d="M3 10h18" />
-			</svg>
-		);
-	}
-	if (key === "notifications") {
-		return (
-			<svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-				<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-				<path d="M13.73 21a2 2 0 0 1-3.46 0" />
-			</svg>
-		);
-	}
-	return (
-		<svg viewBox="0 0 24 24" className={cls} fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-			<circle cx="12" cy="12" r="3" />
-			<path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
-		</svg>
-	);
+	if (key === "dashboard") return <Grid3X3 className={cls} strokeWidth={1.8} />;
+	if (key === "users") return <Users className={cls} strokeWidth={1.8} />;
+	if (key === "groups") return <Folder className={cls} strokeWidth={1.8} />;
+	if (key === "subscriptions") return <WalletCards className={cls} strokeWidth={1.8} />;
+	if (key === "notifications") return <Bell className={cls} strokeWidth={1.8} />;
+	return <Settings className={cls} strokeWidth={1.8} />;
 }

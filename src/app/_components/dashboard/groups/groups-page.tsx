@@ -1,8 +1,11 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { isSameDay, parseISO } from "date-fns";
+import { CalendarDays, Funnel, Search } from "lucide-react";
 import GroupsTable from "@/app/_components/dashboard/groups/groups-table";
 import DeleteModal from "@/app/_components/dashboard/users/delete-modal";
+import GroupDetailsModal from "@/app/_components/dashboard/groups/group-details-modal";
 
 export type Group = {
   id: string;
@@ -17,11 +20,13 @@ const ITEMS_PER_PAGE = 10;
 export default function GroupsPage() {
   const [groups, setGroups] = useState<Group[]>(groupsData);
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; groupId: string | null }>({ open: false, groupId: null });
+  const [detailsModal, setDetailsModal] = useState<{ open: boolean; groupId: string | null }>({ open: false, groupId: null });
   const [currentPage, setCurrentPage] = useState(1);
 
   // Search & filter
   const [search, setSearch] = useState("");
   const [filterMembers, setFilterMembers] = useState<"All" | "1-5" | "6-10" | "11+">("All");
+  const [filterDate, setFilterDate] = useState("");
   const [showFilter, setShowFilter] = useState(false);
 
   const filteredGroups = useMemo(() => {
@@ -35,9 +40,12 @@ export default function GroupsPage() {
         (filterMembers === "1-5" && g.members >= 1 && g.members <= 5) ||
         (filterMembers === "6-10" && g.members >= 6 && g.members <= 10) ||
         (filterMembers === "11+" && g.members >= 11);
-      return matchSearch && matchMembers;
+      const matchDate =
+        filterDate === "" ||
+        isSameDay(parseISO(g.eventDate), parseISO(filterDate));
+      return matchSearch && matchMembers && matchDate;
     });
-  }, [groups, search, filterMembers]);
+  }, [groups, search, filterMembers, filterDate]);
 
   const totalPages = Math.max(1, Math.ceil(filteredGroups.length / ITEMS_PER_PAGE));
   const safeCurrentPage = Math.min(currentPage, totalPages);
@@ -47,6 +55,8 @@ export default function GroupsPage() {
     setGroups((prev) => prev.filter((g) => g.id !== id));
     setDeleteModal({ open: false, groupId: null });
   };
+
+  const selectedGroup = groups.find((g) => g.id === detailsModal.groupId) ?? null;
 
   return (
     <>
@@ -60,7 +70,7 @@ export default function GroupsPage() {
         <section className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="relative flex-1 max-w-sm">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <SearchIcon />
+              <Search className="h-4 w-4" strokeWidth={2} />
             </span>
             <input
               type="text"
@@ -77,9 +87,9 @@ export default function GroupsPage() {
               onClick={() => setShowFilter((p) => !p)}
               className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50"
             >
-              <FilterIcon />
+              <Funnel className="h-4 w-4" strokeWidth={2} />
               Filter
-              {filterMembers !== "All" && (
+              {(filterMembers !== "All" || filterDate !== "") && (
                 <span className="h-2 w-2 rounded-full bg-blue-500" />
               )}
             </button>
@@ -103,9 +113,24 @@ export default function GroupsPage() {
                     </button>
                   ))}
                 </div>
+                <p className="mb-2 mt-4 text-xs font-semibold uppercase tracking-wide text-slate-500">Event Date</p>
+                <div className="relative">
+                  <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                    <CalendarDays className="h-4 w-4" strokeWidth={1.8} />
+                  </span>
+                  <input
+                    type="date"
+                    value={filterDate}
+                    onChange={(e) => {
+                      setFilterDate(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full rounded-lg border border-slate-200 bg-white py-2 pl-10 pr-3 text-xs text-slate-700 outline-none transition focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+                  />
+                </div>
                 <button
                   type="button"
-                  onClick={() => { setFilterMembers("All"); setShowFilter(false); setCurrentPage(1); }}
+                  onClick={() => { setFilterMembers("All"); setFilterDate(""); setShowFilter(false); setCurrentPage(1); }}
                   className="mt-3 w-full rounded-lg text-xs font-medium text-slate-400 hover:text-slate-600 text-center"
                 >
                   Clear filters
@@ -119,6 +144,7 @@ export default function GroupsPage() {
           <GroupsTable
             groups={paginated}
             onDelete={(id: string) => setDeleteModal({ open: true, groupId: id })}
+            onDetails={(id: string) => setDetailsModal({ open: true, groupId: id })}
           />
 
           <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
@@ -167,24 +193,13 @@ export default function GroupsPage() {
         onClose={() => setDeleteModal({ open: false, groupId: null })}
         onConfirm={() => deleteModal.groupId && handleDelete(deleteModal.groupId)}
       />
+
+      <GroupDetailsModal
+        open={detailsModal.open}
+        group={selectedGroup}
+        onClose={() => setDetailsModal({ open: false, groupId: null })}
+      />
     </>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-
-function FilterIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
   );
 }
 

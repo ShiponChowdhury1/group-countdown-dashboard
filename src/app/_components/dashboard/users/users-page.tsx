@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Funnel, Search } from "lucide-react";
 import UsersTable from "@/app/_components/dashboard/users/users-table";
 import DeleteModal from "@/app/_components/dashboard/users/delete-modal";
 import SuspendModal from "@/app/_components/dashboard/users/suspend-modal";
@@ -81,7 +82,7 @@ export default function UsersPage() {
           {/* Search */}
           <div className="relative flex-1 max-w-sm">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
-              <SearchIcon />
+              <Search className="h-4 w-4" strokeWidth={2} />
             </span>
             <input
               type="text"
@@ -102,7 +103,7 @@ export default function UsersPage() {
               onClick={() => setShowFilter((p) => !p)}
               className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-600 shadow-sm transition hover:bg-slate-50"
             >
-              <FilterIcon />
+              <Funnel className="h-4 w-4" strokeWidth={2} />
               Filter
               {(filterSubscription !== "All" || filterStatus !== "All") && (
                 <span className="h-2 w-2 rounded-full bg-blue-500" />
@@ -236,22 +237,5 @@ export default function UsersPage() {
         onClose={() => setDetailsModal({ open: false, userId: null })}
       />
     </>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-
-function FilterIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
   );
 }

@@ -1,4 +1,5 @@
 import { User } from "./users-page";
+import { Ban, Eye, Trash2 } from "lucide-react";
 
 type Props = {
   users: User[];
@@ -52,16 +53,16 @@ export default function UsersTable({ users, onDelete, onSuspend, onDetails }: Pr
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
                     <button onClick={() => onDetails(user.id)} className="text-slate-400 hover:text-slate-600">
-                      <EyeIcon />
+                      <Eye className="h-4.5 w-4.5" strokeWidth={1.8} />
                     </button>
                     <button
                       onClick={() => onSuspend(user.id, user.status === "Active" ? "suspend" : "active")}
                       className="text-slate-400 hover:text-slate-600"
                     >
-                      <SuspendIcon />
+                      <Ban className="h-4.5 w-4.5" strokeWidth={1.8} />
                     </button>
                     <button onClick={() => onDelete(user.id)} className="text-red-400 hover:text-red-600">
-                      <TrashIcon />
+                      <Trash2 className="h-4.5 w-4.5" strokeWidth={1.8} />
                     </button>
                   </div>
                 </td>
@@ -71,32 +72,5 @@ export default function UsersTable({ users, onDelete, onSuspend, onDetails }: Pr
         </table>
       </div>
     </div>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12S5 5 12 5s11 7 11 7-4 7-11 7S1 12 1 12Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-function SuspendIcon() {
-  return (
-    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="10" />
-      <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
-    </svg>
-  );
-}
-function TrashIcon() {
-  return (
-    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14H6L5 6" />
-      <path d="M10 11v6M14 11v6" />
-      <path d="M9 6V4h6v2" />
-    </svg>
   );
 }

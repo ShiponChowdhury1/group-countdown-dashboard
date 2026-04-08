@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import { Funnel, Search } from "lucide-react";
 import { Subscriber } from "./subscriptions-page";
 
 type Props = {
@@ -31,7 +32,7 @@ export default function SubscribersTable({ subscribers }: Props) {
           {/* Search */}
           <div className="relative">
             <span className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400">
-              <SearchIcon />
+              <Search className="h-3.5 w-3.5" strokeWidth={2} />
             </span>
             <input
               type="text"
@@ -49,7 +50,7 @@ export default function SubscribersTable({ subscribers }: Props) {
               onClick={() => setShowFilter((p) => !p)}
               className="flex items-center gap-1.5 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-xs font-medium text-slate-600 transition hover:bg-slate-100"
             >
-              <FilterIcon />
+              <Funnel className="h-3.5 w-3.5" strokeWidth={2} />
               Filter
               {filterPlan !== "All" && <span className="h-1.5 w-1.5 rounded-full bg-blue-500" />}
             </button>
@@ -117,21 +118,5 @@ export default function SubscribersTable({ subscribers }: Props) {
         </table>
       </div>
     </div>
-  );
-}
-
-function SearchIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-function FilterIcon() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-3.5 w-3.5" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
-    </svg>
   );
 }

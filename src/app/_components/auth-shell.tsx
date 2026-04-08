@@ -19,14 +19,13 @@ type FormFieldProps = {
   placeholder?: string;
   leftElement?: React.ReactNode;
   rightElement?: React.ReactNode;
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
 };
 
 export function AuthPage({ children }: AuthPageProps) {
   return (
-    <main className="auth-bg relative flex min-h-screen w-full items-center justify-center overflow-hidden px-4 py-16">
-      <div className="pointer-events-none absolute -left-24 top-10 h-52 w-52 rounded-full bg-sky-200/40 blur-3xl" />
-      <div className="pointer-events-none absolute right-0 top-1/3 h-72 w-72 rounded-full bg-indigo-200/40 blur-3xl" />
-      <div className="pointer-events-none absolute bottom-0 left-1/3 h-64 w-64 rounded-full bg-blue-100/60 blur-3xl" />
+    <main className="relative flex min-h-screen w-full items-center justify-center bg-white px-4 py-16">
       <div className="relative z-10 w-full max-w-md">{children}</div>
     </main>
   );
@@ -42,7 +41,7 @@ export function AuthCard({
   return (
     <section className="auth-card rounded-3xl px-8 py-10 backdrop-blur">
       <div className="flex flex-col items-center text-center">
-        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-sky-500 to-indigo-500 text-white shadow-lg shadow-slate-900/15">
+        <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-sky-500 to-indigo-500 text-white shadow-lg shadow-slate-900/15">
           {badgeIcon ?? <ShieldIcon />}
         </div>
         <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
@@ -70,6 +69,8 @@ export function FormField({
   placeholder,
   leftElement,
   rightElement,
+  value,
+  onChange,
 }: FormFieldProps) {
   const leftPadding = leftElement ? "pl-11" : "pl-4";
   const rightPadding = rightElement ? "pr-11" : "pr-4";
@@ -89,6 +90,8 @@ export function FormField({
           id={id}
           type={type}
           placeholder={placeholder}
+          value={value}
+          onChange={onChange}
           className={`w-full rounded-2xl border border-slate-200 bg-white/80 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 ${leftPadding} ${rightPadding}`}
         />
         {rightElement ? (

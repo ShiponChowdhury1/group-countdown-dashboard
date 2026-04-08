@@ -1,11 +1,13 @@
 import { Group } from "./groups-page";
+import { CalendarDays, Eye, Trash2 } from "lucide-react";
 
 type Props = {
   groups: Group[];
   onDelete: (id: string) => void;
+  onDetails: (id: string) => void;
 };
 
-export default function GroupsTable({ groups, onDelete }: Props) {
+export default function GroupsTable({ groups, onDelete, onDetails }: Props) {
   return (
     <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
       <div className="px-5 py-4">
@@ -29,18 +31,18 @@ export default function GroupsTable({ groups, onDelete }: Props) {
                 <td className="px-5 py-3.5 text-slate-600">{group.members}</td>
                 <td className="px-5 py-3.5 text-slate-600">
                   <span className="flex items-center gap-2">
-                    <CalendarIcon />
+                    <CalendarDays className="h-4 w-4 text-slate-400" strokeWidth={1.8} />
                     {group.eventDate}
                   </span>
                 </td>
                 <td className="px-5 py-3.5 text-slate-600">{group.createdBy}</td>
                 <td className="px-5 py-3.5">
                   <div className="flex items-center gap-3">
-                    <button className="text-slate-400 hover:text-slate-600">
-                      <EyeIcon />
+                    <button onClick={() => onDetails(group.id)} className="text-slate-400 hover:text-slate-600">
+                      <Eye className="h-4.5 w-4.5" strokeWidth={1.8} />
                     </button>
                     <button onClick={() => onDelete(group.id)} className="text-red-400 hover:text-red-600">
-                      <TrashIcon />
+                      <Trash2 className="h-4.5 w-4.5" strokeWidth={1.8} />
                     </button>
                   </div>
                 </td>
@@ -50,34 +52,5 @@ export default function GroupsTable({ groups, onDelete }: Props) {
         </table>
       </div>
     </div>
-  );
-}
-
-function CalendarIcon() {
-  return (
-    <svg className="h-4 w-4 text-slate-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  );
-}
-function EyeIcon() {
-  return (
-    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M1 12S5 5 12 5s11 7 11 7-4 7-11 7S1 12 1 12Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-function TrashIcon() {
-  return (
-    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <polyline points="3 6 5 6 21 6" />
-      <path d="M19 6l-1 14H6L5 6" />
-      <path d="M10 11v6M14 11v6" />
-      <path d="M9 6V4h6v2" />
-    </svg>
   );
 }
