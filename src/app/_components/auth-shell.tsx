@@ -44,9 +44,7 @@ export function AuthCard({
         <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-2xl bg-linear-to-br from-sky-500 to-indigo-500 text-white shadow-lg shadow-slate-900/15">
           {badgeIcon ?? <ShieldIcon />}
         </div>
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-400">
-          Secure Access
-        </p>
+  
         <h1 className="mt-3 text-2xl font-semibold text-slate-900">
           {title}
         </h1>

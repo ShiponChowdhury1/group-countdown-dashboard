@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { Bell, ChevronDown, LogOut, Menu, Settings, UserRound } from "lucide-react";
 import LogoutModal from "@/app/_components/dashboard/logout/logout-modal";
 
@@ -18,6 +19,7 @@ type TopNavProps = {
 };
 
 export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -183,7 +185,7 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
         onClose={() => setLogoutModal(false)}
         onConfirm={() => {
           setLogoutModal(false);
-          // logout logic — e.g. router.push("/login")
+          router.push("/admin-login");
         }}
       />
     </header>

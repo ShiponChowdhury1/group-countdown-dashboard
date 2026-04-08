@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
 	Bell,
 	ChevronLeft,
@@ -33,6 +34,7 @@ export default function AdminSidebar({
 	isCollapsed,
 	onToggleCollapse,
 }: AdminSidebarProps) {
+	const router = useRouter();
 	const [logoutModal, setLogoutModal] = useState(false);
 	const toggleLabel = isCollapsed ? "Expand sidebar" : "Collapse sidebar";
 
@@ -172,6 +174,7 @@ export default function AdminSidebar({
 				onClose={() => setLogoutModal(false)}
 				onConfirm={() => {
 					setLogoutModal(false);
+					router.push("/admin-login");
 				}}
 			/>
 		</>

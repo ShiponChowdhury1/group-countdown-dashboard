@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState("");
 
   const handleLogin = () => {
-    const isValidUser = email.trim().toLowerCase() === "shipon@gmail.com";
+    const isValidUser = email.trim().toLowerCase() === "admin@gmail.com";
     const isValidPassword = password === "123456";
 
     if (isValidUser && isValidPassword) {
@@ -30,7 +30,7 @@ export default function AdminLoginPage() {
       return;
     }
 
-    setError("Invalid credentials. Use shipon@gmail.com / 123456 for testing.");
+    setError("Invalid credentials. Use admin@gmail.com / 123456 for testing.");
   };
 
   return (
@@ -44,7 +44,7 @@ export default function AdminLoginPage() {
             id="email"
             label="Email"
             type="email"
-            placeholder="shipon@gmail.com"
+            placeholder="Email address"
             leftElement={<MailIcon />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -53,7 +53,7 @@ export default function AdminLoginPage() {
             id="password"
             label="Password"
             type={showPassword ? "text" : "password"}
-            placeholder="123456"
+            placeholder="Password"
             leftElement={<LockIcon />}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
