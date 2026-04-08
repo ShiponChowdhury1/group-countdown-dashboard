@@ -51,9 +51,9 @@ export default function DashboardPage() {
 
 				{activeNav === "Dashboard" && (
 					<div className="px-4 sm:px-6 pt-4">
-						<section className="mt-7">
+						<section className="mt-2">
 							<h1 className="text-[22px] font-bold text-slate-900">Dashboard Overview</h1>
-							<p className="mt-1 text-[18px] font-semibold text-slate-800">Welcome back, Admin</p>
+							 <p className="mt-1 text-sm text-slate-500">Welcome back, Admin</p>
 						</section>
 
 						<section className="mt-7">

@@ -21,6 +21,7 @@ type FormFieldProps = {
   rightElement?: React.ReactNode;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  inputClassName?: string;
 };
 
 export function AuthPage({ children }: AuthPageProps) {
@@ -69,6 +70,7 @@ export function FormField({
   rightElement,
   value,
   onChange,
+  inputClassName,
 }: FormFieldProps) {
   const leftPadding = leftElement ? "pl-11" : "pl-4";
   const rightPadding = rightElement ? "pr-11" : "pr-4";
@@ -90,7 +92,7 @@ export function FormField({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
-          className={`w-full rounded-2xl border border-slate-200 bg-white/80 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 ${leftPadding} ${rightPadding}`}
+          className={`w-full rounded-xl border border-slate-200 bg-white/80 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 ${leftPadding} ${rightPadding} ${inputClassName ?? ""}`}
         />
         {rightElement ? (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">

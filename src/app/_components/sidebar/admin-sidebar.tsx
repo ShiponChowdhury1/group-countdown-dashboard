@@ -107,14 +107,14 @@ export default function AdminSidebar({
 								type="button"
 								onClick={() => onChangeNav(item.label)}
 								title={isCollapsed ? item.label : undefined}
-								className={`group relative flex items-center gap-3 rounded-[10px] border transition-all duration-200 ${
+								className={`group relative flex items-center gap-3 rounded-[10px] transition-all duration-200 ${
 									isCollapsed
 										? "h-11 w-11 justify-center mx-auto"
 										: "h-12 w-full px-4"
 								} ${
 									isActive
-										? "border-blue-500 bg-blue-500 text-white"
-										: "border-[#D8E3FF] text-[#274690] hover:border-[#B8CCFF] hover:bg-[#EEF4FF]"
+										? "bg-blue-500 text-white"
+										: "text-[#274690] hover:bg-[#EEF4FF]"
 								}`}
 							>
 								<span

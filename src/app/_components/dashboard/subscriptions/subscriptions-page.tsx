@@ -60,7 +60,7 @@ export default function SubscriptionsPage() {
   return (
     <>
       <div className="px-4 sm:px-6 pt-4">
-        <section className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <section className="mt-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-[22px] font-bold text-slate-900">Subscriptions Management</h1>
             <p className="mt-1 text-sm text-slate-500">Manage subscription plans and subscribers</p>

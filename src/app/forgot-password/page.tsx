@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
           />
           <button
             type="button"
-            className="w-full rounded-2xl bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
+            className="w-full rounded-xl bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
           >
             Send OTP
           </button>

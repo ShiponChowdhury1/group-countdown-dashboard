@@ -125,13 +125,13 @@ export default function VerifyEmailPage() {
                   inputRefs.current[index] = element;
                 }}
                 autoComplete="one-time-code"
-                className="h-12 w-full rounded-2xl border border-slate-200 bg-white/80 text-center text-lg font-semibold text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
+                className="h-12 w-full rounded-xl border border-slate-200 bg-white/80 text-center text-lg font-semibold text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200"
               />
             ))}
           </div>
           <button
             type="button"
-            className="w-full rounded-2xl bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
+            className="w-full rounded-xl bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
           >
             Verify Email
           </button>

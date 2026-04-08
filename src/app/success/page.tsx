@@ -16,7 +16,7 @@ export default function SuccessPage() {
         </p>
         <Link
           href="/admin-login"
-          className="mt-8 block w-full rounded-2xl bg-[#3377FF] py-3 text-center text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
+          className="mt-8 block w-full rounded-xl bg-[#3377FF] py-3 text-center text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
         >
           Sign in
         </Link>

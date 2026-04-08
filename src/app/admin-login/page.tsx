@@ -48,6 +48,7 @@ export default function AdminLoginPage() {
             leftElement={<MailIcon />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            inputClassName="rounded-lg"
           />
           <FormField
             id="password"
@@ -57,6 +58,7 @@ export default function AdminLoginPage() {
             leftElement={<LockIcon />}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            inputClassName="rounded-lg"
             rightElement={
               <button
                 type="button"
@@ -85,7 +87,7 @@ export default function AdminLoginPage() {
           <button
             type="button"
             onClick={handleLogin}
-            className="w-full rounded-2xl bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
+            className="w-full rounded-lg bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
           >
             Login
           </button>
