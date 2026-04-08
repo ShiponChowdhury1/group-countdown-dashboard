@@ -67,8 +67,8 @@ export default function GroupsPage() {
         </section>
 
         {/* Search + Filter */}
-        <section className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="relative flex-1 max-w-sm">
+        <section className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-start">
+          <div className="relative w-full sm:w-80">
             <span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
               <Search className="h-4 w-4" strokeWidth={2} />
             </span>

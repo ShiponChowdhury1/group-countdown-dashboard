@@ -51,16 +51,21 @@ export default function AdminSidebar({
 			)}
 
 			<aside
-				className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-slate-200 bg-white py-5 transition-all duration-300 ease-in-out lg:z-30 lg:translate-x-0 ${
+				className={`fixed inset-y-0 left-0 z-40 flex flex-col border-r border-slate-200 bg-white transition-all duration-300 ease-in-out lg:z-30 lg:translate-x-0 ${
 					isOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
-				} ${isCollapsed ? "w-16" : "w-58.75"}`}
+				} ${isCollapsed ? "w-16 py-6" : "w-58.75 py-5"}`}
 			>
 				{/* ── Header ── */}
 				<div
-					className={`relative mb-6 flex items-center px-3 ${
+					className={`relative mb-2 flex min-h-14 items-center px-3 ${
 						isCollapsed ? "justify-center" : "px-4 pr-12"
 					}`}
 				>
+					{isCollapsed && (
+						<div className="absolute left-1/2 top-1/2 flex h-9 w-9 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-blue-600 text-[11px] leading-none font-extrabold tracking-wide text-white shadow-sm ring-1 ring-blue-200/60">
+							TM
+						</div>
+					)}
 					{!isCollapsed && (
 						<div className="min-w-0 overflow-hidden">
 							<h2 className="truncate text-lg font-bold leading-tight text-blue-500">
@@ -76,7 +81,7 @@ export default function AdminSidebar({
 						onClick={onToggleCollapse}
 						aria-label={toggleLabel}
 						title={toggleLabel}
-						className="group absolute -right-3.5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 lg:inline-flex"
+						className="group absolute -right-4.5 top-1/2 z-10 hidden h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 shadow-md transition-all duration-200 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-200 lg:inline-flex"
 					>
 						{isCollapsed ? <ChevronRight className="h-5 w-5" strokeWidth={2.2} /> : <ChevronLeft className="h-5 w-5" strokeWidth={2.2} />}
 						<span className="pointer-events-none absolute left-full ml-2 hidden whitespace-nowrap rounded-md bg-slate-800 px-2 py-1 text-[11px] font-medium text-white opacity-0 shadow-md transition-opacity group-hover:block group-hover:opacity-100 group-focus-visible:block group-focus-visible:opacity-100">
@@ -98,7 +103,7 @@ export default function AdminSidebar({
 				</div>
 
 				{/* ── Nav items ── */}
-				<nav className="mt-2 flex flex-1 flex-col gap-2 overflow-y-auto overflow-x-hidden px-2">
+				<nav className="mt-3 flex flex-1 flex-col gap-2.5 overflow-y-auto overflow-x-hidden px-2">
 					{navItems.map((item) => {
 						const isActive = activeNav === item.label;
 						return (
@@ -109,7 +114,7 @@ export default function AdminSidebar({
 								title={isCollapsed ? item.label : undefined}
 								className={`group relative flex items-center gap-3 rounded-[10px] transition-all duration-200 ${
 									isCollapsed
-										? "h-11 w-11 justify-center mx-auto"
+										? "h-12 w-12 justify-center mx-auto"
 										: "h-12 w-full px-4"
 								} ${
 									isActive
@@ -148,7 +153,7 @@ export default function AdminSidebar({
 						title={isCollapsed ? "Logout" : undefined}
 						className={`group relative flex items-center gap-3 rounded-[10px] border border-slate-200 bg-slate-50 transition-all duration-200 hover:bg-slate-100 ${
 							isCollapsed
-								? "h-11 w-11 justify-center mx-auto"
+								? "h-12 w-12 justify-center mx-auto"
 								: "h-12 w-full px-4"
 						}`}
 					>
