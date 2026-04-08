@@ -16,6 +16,7 @@ import { statsCards } from "@/data/dashboard";
 export default function DashboardPage() {
 	const [activeNav, setActiveNav] = useState("Dashboard");
 	const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+	const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
 	return (
 		<div className="min-h-screen bg-[#F9FAFB]">
@@ -27,9 +28,16 @@ export default function DashboardPage() {
 				}}
 				isOpen={isSidebarOpen}
 				onClose={() => setIsSidebarOpen(false)}
+				isCollapsed={isSidebarCollapsed}
+				onToggleCollapse={() => setIsSidebarCollapsed((prev) => !prev)}
 			/>
 
-			<main className="min-h-screen pb-10 lg:pl-58.75">
+			{/* Main content — shifts with sidebar width */}
+			<main
+				className={`min-h-screen pb-10 transition-all duration-300 ease-in-out ${
+					isSidebarCollapsed ? "lg:pl-16" : "lg:pl-58.75"
+				}`}
+			>
 				<TopNav
 					onMenuClick={() => setIsSidebarOpen((prev) => !prev)}
 					onProfileNavigate={() => setActiveNav("Settings")}
@@ -42,7 +50,7 @@ export default function DashboardPage() {
 				{activeNav === "Settings" && <SettingsPage />}
 
 				{activeNav === "Dashboard" && (
-					<div className="px-6 pt-4">
+					<div className="px-4 sm:px-6 pt-4">
 						<section className="mt-7">
 							<h1 className="text-[22px] font-bold text-slate-900">Dashboard Overview</h1>
 							<p className="mt-1 text-[18px] font-semibold text-slate-800">Welcome back, Admin</p>

@@ -63,11 +63,6 @@ export default function UsersTable({ users, onDelete, onSuspend, onDetails }: Pr
                     <button onClick={() => onDelete(user.id)} className="text-red-400 hover:text-red-600">
                       <TrashIcon />
                     </button>
-                    {user.subscription === "Premium" && (
-                      <span className="text-yellow-400">
-                        <StarIcon />
-                      </span>
-                    )}
                   </div>
                 </td>
               </tr>
@@ -102,13 +97,6 @@ function TrashIcon() {
       <path d="M19 6l-1 14H6L5 6" />
       <path d="M10 11v6M14 11v6" />
       <path d="M9 6V4h6v2" />
-    </svg>
-  );
-}
-function StarIcon() {
-  return (
-    <svg className="h-4.5 w-4.5" viewBox="0 0 24 24" fill="currentColor">
-      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
     </svg>
   );
 }

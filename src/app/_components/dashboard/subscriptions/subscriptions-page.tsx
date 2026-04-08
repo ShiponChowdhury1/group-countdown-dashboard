@@ -25,7 +25,7 @@ export type Subscriber = {
   endDate: string;
 };
 
-const ITEMS_PER_PAGE = 8;
+const ITEMS_PER_PAGE = 10;
 
 export default function SubscriptionsPage() {
   const [plans, setPlans] = useState<Plan[]>(initialPlans);
@@ -33,9 +33,11 @@ export default function SubscriptionsPage() {
   const [editModal, setEditModal] = useState<{ open: boolean; plan: Plan | null }>({ open: false, plan: null });
   const [successModal, setSuccessModal] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
+  const [addSubModal, setAddSubModal] = useState(false);
 
-  const totalPages = Math.ceil(subscribers.length / ITEMS_PER_PAGE);
-  const paginated = subscribers.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const totalPages = Math.max(1, Math.ceil(subscribers.length / ITEMS_PER_PAGE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+  const paginated = subscribers.slice((safeCurrentPage - 1) * ITEMS_PER_PAGE, safeCurrentPage * ITEMS_PER_PAGE);
 
   const handleSave = (updated: { monthlyPrice: number; yearlyPrice: number; description: string }) => {
     if (!editModal.plan) return;
@@ -50,12 +52,27 @@ export default function SubscriptionsPage() {
     setSuccessModal(true);
   };
 
+  const handleDeletePlan = (id: "free" | "premium") => {
+    setPlans((prev) => prev.filter((p) => p.id !== id));
+  };
+
   return (
     <>
-      <div className="px-6 pt-4">
-        <section className="mt-7">
-          <h1 className="text-[22px] font-bold text-slate-900">Subscriptions Management</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage subscription plans and subscribers</p>
+      <div className="px-4 sm:px-6 pt-4">
+        <section className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="text-[22px] font-bold text-slate-900">Subscriptions Management</h1>
+            <p className="mt-1 text-sm text-slate-500">Manage subscription plans and subscribers</p>
+          </div>
+          {/* Add Subscription Button */}
+          <button
+            type="button"
+            onClick={() => setAddSubModal(true)}
+            className="inline-flex items-center gap-2 self-start sm:self-auto rounded-xl bg-blue-500 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-600 active:scale-95"
+          >
+            <PlusIcon />
+            Add Subscription
+          </button>
         </section>
 
         <section className="mt-6 grid gap-4 xl:grid-cols-2">
@@ -64,30 +81,50 @@ export default function SubscriptionsPage() {
               key={plan.id}
               plan={plan}
               onEdit={() => setEditModal({ open: true, plan })}
+              onDelete={() => handleDeletePlan(plan.id)}
             />
           ))}
         </section>
 
         <section className="mt-6">
-          <SubscribersTable
-            subscribers={paginated}
-          />
-          <div className="mt-4 flex items-center justify-end gap-1">
-            {getPageNumbers(currentPage, totalPages).map((p, i) =>
-              p === "..." ? (
-                <span key={`dots-${i}`} className="px-2 text-slate-400">...</span>
-              ) : (
+          <SubscribersTable subscribers={paginated} />
+          <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              disabled={safeCurrentPage === 1}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Previous
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => {
+              const page = index + 1;
+              const isActive = page === safeCurrentPage;
+              return (
                 <button
-                  key={p}
-                  onClick={() => setCurrentPage(Number(p))}
-                  className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-colors ${
-                    currentPage === p ? "bg-blue-500 text-white" : "text-slate-600 hover:bg-slate-100"
+                  key={page}
+                  type="button"
+                  onClick={() => setCurrentPage(page)}
+                  className={`h-9 min-w-9 rounded-lg border px-3 text-sm font-semibold transition ${
+                    isActive
+                      ? "border-blue-500 bg-blue-500 text-white"
+                      : "border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
                   }`}
                 >
-                  {p}
+                  {page}
                 </button>
-              )
-            )}
+              );
+            })}
+
+            <button
+              type="button"
+              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              disabled={safeCurrentPage === totalPages}
+              className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-600 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              Next
+            </button>
           </div>
         </section>
       </div>
@@ -104,13 +141,55 @@ export default function SubscriptionsPage() {
         planName={editModal.plan?.name ?? "Premium"}
         onClose={() => setSuccessModal(false)}
       />
+
+      {/* Simple Add Subscription modal */}
+      {addSubModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 px-4">
+          <div className="w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+            <h2 className="text-base font-semibold text-slate-800 mb-1">Add New Subscription</h2>
+            <p className="text-sm text-slate-500 mb-5">Create a new subscription plan or entry.</p>
+            <div className="space-y-3">
+              <input
+                type="text"
+                placeholder="Plan name"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+              />
+              <input
+                type="number"
+                placeholder="Monthly price ($)"
+                className="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+              />
+            </div>
+            <div className="mt-5 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setAddSubModal(false)}
+                className="rounded-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={() => setAddSubModal(false)}
+                className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600"
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
 
-function getPageNumbers(current: number, total: number): (number | "...")[] {
-  if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
-  return [1, 2, 3, "...", total - 1, total];
+function PlusIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <line x1="12" y1="5" x2="12" y2="19" />
+      <line x1="5" y1="12" x2="19" y2="12" />
+    </svg>
+  );
 }
 
 const initialPlans: Plan[] = [
