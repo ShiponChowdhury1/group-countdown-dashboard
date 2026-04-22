@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Manrope, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import StoreProvider from "./StoreProvider";
 
 const manrope = Manrope({
   variable: "--font-manrope",
@@ -32,7 +33,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="min-h-full flex flex-col text-slate-900"
       >
-        {children}
+        <StoreProvider>{children}</StoreProvider>
       </body>
     </html>
   );

@@ -12,25 +12,59 @@ import {
   LockIcon,
   MailIcon,
 } from "@/app/_components/auth-shell";
+import { useLoginMutation } from "@/store/authApi";
+import { setCredentials } from "@/store/authSlice";
+import { useAppDispatch } from "@/store/hooks";
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = () => {
-    const isValidUser = email.trim().toLowerCase() === "admin@gmail.com";
-    const isValidPassword = password === "123456";
+  const [login, { isLoading }] = useLoginMutation();
 
-    if (isValidUser && isValidPassword) {
-      setError("");
-      router.push("/dashboard");
+  const handleLogin = async () => {
+    setError("");
+
+    if (!email.trim()) {
+      setError("Please enter your email.");
+      return;
+    }
+    if (!password) {
+      setError("Please enter your password.");
       return;
     }
 
-    setError("Invalid credentials. Use admin@gmail.com / 123456 for testing.");
+    try {
+      const result = await login({ email: email.trim(), password }).unwrap();
+      dispatch(
+        setCredentials({
+          user: result.user,
+          access: result.access,
+          refresh: result.refresh,
+        })
+      );
+      router.push("/dashboard");
+    } catch (err: unknown) {
+      const apiError = err as {
+        data?: { detail?: string; message?: string; non_field_errors?: string[] };
+        error?: string;
+      };
+      const message =
+        apiError?.data?.detail ||
+        apiError?.data?.message ||
+        apiError?.data?.non_field_errors?.[0] ||
+        "Invalid credentials. Please try again.";
+      setError(message);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") handleLogin();
   };
 
   return (
@@ -38,7 +72,7 @@ export default function AdminLoginPage() {
       <AuthCard
         title="Admin Login"
         subtitle="Sign in to access the dashboard"
-          >
+      >
         <div className="space-y-5">
           <FormField
             id="email"
@@ -48,6 +82,7 @@ export default function AdminLoginPage() {
             leftElement={<MailIcon />}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={handleKeyDown}
             inputClassName="rounded-lg"
           />
           <FormField
@@ -58,6 +93,7 @@ export default function AdminLoginPage() {
             leftElement={<LockIcon />}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            onKeyDown={handleKeyDown}
             inputClassName="rounded-lg"
             rightElement={
               <button
@@ -76,7 +112,6 @@ export default function AdminLoginPage() {
             </p>
           ) : null}
           <div className="flex items-center justify-end text-sm">
-
             <Link
               href="/forgot-password"
               className="font-semibold text-[#3377FF] underline underline-offset-4 hover:text-[#2b67e6]"
@@ -87,9 +122,10 @@ export default function AdminLoginPage() {
           <button
             type="button"
             onClick={handleLogin}
-            className="w-full rounded-lg bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6]"
+            disabled={isLoading}
+            className="w-full rounded-lg bg-[#3377FF] py-3 text-sm font-semibold text-white shadow-lg shadow-slate-900/20 transition hover:-translate-y-0.5 hover:bg-[#2b67e6] disabled:opacity-60 disabled:cursor-not-allowed disabled:translate-y-0"
           >
-            Login
+            {isLoading ? "Logging in…" : "Login"}
           </button>
         </div>
       </AuthCard>

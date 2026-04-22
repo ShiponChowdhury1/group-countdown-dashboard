@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useSyncExternalStore } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { Bell, ChevronDown, LogOut, Menu, Settings, UserRound } from "lucide-react";
 import LogoutModal from "@/app/_components/dashboard/logout/logout-modal";
+import { useGetProfileQuery, authApi } from "@/store/authApi";
+import { useAppSelector, useAppDispatch } from "@/store/hooks";
+import { logout } from "@/store/authSlice";
 
 const notificationsData = [
   { id: "n1", title: "New Feature Launch", message: "We have launched a new task sharing feature!", timeAgo: "2 days ago", unread: true },
@@ -18,13 +21,33 @@ type TopNavProps = {
   onProfileNavigate: () => void;
 };
 
+function normalizeImageUrl(url: string | null | undefined) {
+  if (!url) return "/admin-avatar.svg";
+  return url.replace("http://", "https://");
+}
+
 export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) {
   const router = useRouter();
+  const dispatch = useAppDispatch();
+  const authUser = useAppSelector((state) => state.auth.user);
+  const { data: profileData } = useGetProfileQuery();
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [logoutModal, setLogoutModal] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [failedAvatarSrc, setFailedAvatarSrc] = useState<string | null>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+
+  const user = isHydrated ? profileData?.user ?? authUser : null;
+  const userName = user?.name || "Admin";
+  const userEmail = user?.email || "admin@gmail.com";
+  const baseAvatar = normalizeImageUrl(user?.image);
+  const userAvatar = failedAvatarSrc === baseAvatar ? "/admin-avatar.svg" : baseAvatar;
 
   const unreadCount = notificationsData.filter((n) => n.unread).length;
 
@@ -118,15 +141,17 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
               className="flex items-center gap-2 rounded-full px-3 py-2 cursor-pointer hover:bg-slate-50"
             >
               <Image
-                src="/admin-avatar.svg"
+                src={userAvatar}
                 alt="Admin profile"
                 width={40}
                 height={40}
                 className="h-10 w-10 rounded-full border border-slate-200 object-cover"
+                unoptimized
+                onError={() => setFailedAvatarSrc(baseAvatar)}
               />
               <div className="ml-1 leading-tight text-left hidden sm:block">
-                <p className="text-sm font-semibold text-slate-800">Admin Angela</p>
-                <p className="text-xs text-slate-500">admin@gmail.com</p>
+                <p className="text-sm font-semibold text-slate-800">{userName}</p>
+                <p className="text-xs text-slate-500">{userEmail}</p>
               </div>
               <ChevronDown className={`h-4 w-4 text-slate-500 transition-transform ${isOpen ? "rotate-180" : "rotate-0"}`} strokeWidth={2} aria-hidden="true" />
             </button>
@@ -136,15 +161,17 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
                 <div className="p-6 border-b border-slate-100">
                   <div className="flex items-center gap-3">
                     <Image
-                      src="/admin-avatar.svg"
+                      src={userAvatar}
                       alt="Admin profile"
                       width={48}
                       height={48}
                       className="h-12 w-12 rounded-full border border-slate-200 object-cover"
+                      unoptimized
+                      onError={() => setFailedAvatarSrc(baseAvatar)}
                     />
                     <div>
-                      <p className="text-sm font-semibold text-slate-800">Admin</p>
-                      <p className="text-xs text-slate-500">admin@gmail.com</p>
+                      <p className="text-sm font-semibold text-slate-800">{userName}</p>
+                      <p className="text-xs text-slate-500">{userEmail}</p>
                     </div>
                   </div>
                 </div>
@@ -185,6 +212,8 @@ export default function TopNav({ onMenuClick, onProfileNavigate }: TopNavProps) 
         onClose={() => setLogoutModal(false)}
         onConfirm={() => {
           setLogoutModal(false);
+          dispatch(logout());
+          dispatch(authApi.util.resetApiState());
           router.push("/admin-login");
         }}
       />

@@ -1,29 +1,107 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useRef, useState } from "react";
 import Image from "next/image";
 import { Camera } from "lucide-react";
+import { useGetProfileQuery, useUpdateProfileMutation } from "@/store/authApi";
+import { setUser } from "@/store/authSlice";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 type Props = {
   onSaved: () => void;
 };
 
+function normalizeImageUrl(url: string | null | undefined) {
+  if (!url) return null;
+  // Backend may return http URL; force https in browser to avoid mixed-content blocking.
+  return url.replace("http://", "https://");
+}
+
 export default function PersonalDetails({ onSaved }: Props) {
-  const [name, setName] = useState("Maria Gustoba");
-  const [bio, setBio] = useState("Admin and CEO");
-  const [phone, setPhone] = useState("(513) 874-9999");
-  const [email, setEmail] = useState("example@gmail.com");
-  const [avatarUrl, setAvatarUrl] = useState("/admin-avatar.svg");
+  const dispatch = useAppDispatch();
+  const loggedInUser = useAppSelector((state) => state.auth.user);
+  const { data: profileData, isFetching: isProfileLoading } = useGetProfileQuery();
+  const [updateProfile, { isLoading: isUpdatingProfile }] = useUpdateProfileMutation();
+  const resolvedUser = profileData?.user ?? loggedInUser;
+
+  const [name, setName] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
+  const [email, setEmail] = useState<string | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [error, setError] = useState("");
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setError("");
     const file = e.target.files?.[0];
-    if (file) setAvatarUrl(URL.createObjectURL(file));
+    if (file) {
+      setImageFile(file);
+      setAvatarUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleCancel = () => {
+    setName(null);
+    setPhone(null);
+    setEmail(null);
+    setAvatarUrl(null);
+    setImageFile(null);
+    setError("");
+  };
+
+  const handleSave = async () => {
+    setError("");
+
+    const finalName = (name ?? resolvedUser?.name ?? "").trim();
+    const finalPhone = (phone ?? resolvedUser?.phone ?? "").trim();
+
+    if (!finalName) {
+      setError("Name is required.");
+      return;
+    }
+
+    try {
+      const response = await updateProfile({
+        name: finalName,
+        phone: finalPhone,
+        image: imageFile ?? undefined,
+      }).unwrap();
+
+      dispatch(setUser(response.user));
+      setName(null);
+      setPhone(null);
+      setEmail(response.user.email || null);
+      setAvatarUrl(normalizeImageUrl(response.user.image) || null);
+      setImageFile(null);
+      onSaved();
+    } catch (err: unknown) {
+      const apiError = err as {
+        data?: {
+          message?: string;
+          detail?: string;
+          name?: string[];
+          phone?: string[];
+          image?: string[];
+        };
+      };
+
+      setError(
+        apiError?.data?.message ||
+          apiError?.data?.detail ||
+          apiError?.data?.name?.[0] ||
+          apiError?.data?.phone?.[0] ||
+          apiError?.data?.image?.[0] ||
+          "Failed to update profile. Please try again."
+      );
+    }
   };
 
   return (
     <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white p-6 shadow-sm">
       <h2 className="text-base font-semibold text-slate-800">Personal Details</h2>
+      {isProfileLoading ? <p className="mt-2 text-xs text-slate-500">Loading profile...</p> : null}
+      {error ? <p className="mt-2 text-xs font-medium text-rose-600">{error}</p> : null}
 
       <div className="mt-4">
         <div
@@ -31,7 +109,7 @@ export default function PersonalDetails({ onSaved }: Props) {
           onClick={() => fileRef.current?.click()}
         >
           <Image
-            src={avatarUrl}
+            src={avatarUrl ?? normalizeImageUrl(resolvedUser?.image) ?? "/admin-avatar.svg"}
             alt="avatar"
             fill
             sizes="112px"
@@ -62,24 +140,17 @@ export default function PersonalDetails({ onSaved }: Props) {
         <div>
           <label className="text-sm font-medium text-slate-700">Name</label>
           <input
-            value={name}
+            value={name ?? resolvedUser?.name ?? ""}
             onChange={(e) => setName(e.target.value)}
             className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
           />
         </div>
-        <div>
-          <label className="text-sm font-medium text-slate-700">Short Bio</label>
-          <input
-            value={bio}
-            onChange={(e) => setBio(e.target.value)}
-            className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
-          />
-        </div>
+ 
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className="text-sm font-medium text-slate-700">Contact Phone</label>
             <input
-              value={phone}
+              value={phone ?? resolvedUser?.phone ?? ""}
               onChange={(e) => setPhone(e.target.value)}
               className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
             />
@@ -87,24 +158,30 @@ export default function PersonalDetails({ onSaved }: Props) {
           <div>
             <label className="text-sm font-medium text-slate-700">Contact Email</label>
             <input
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2.5 text-sm text-slate-700 outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-100"
+              value={email ?? resolvedUser?.email ?? ""}
+              readOnly
+              className="mt-1.5 w-full rounded-lg border border-slate-200 bg-slate-100 px-3 py-2.5 text-sm text-slate-500 outline-none"
             />
           </div>
         </div>
       </div>
 
       <div className="mt-6 flex items-center justify-end gap-3">
-        <button className="rounded-lg border border-slate-200 px-5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="rounded-lg border border-slate-200 px-5 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+        >
           Cancel
         </button>
         <button
-          onClick={onSaved}
-          className="flex items-center gap-2 rounded-lg bg-blue-500 px-5 py-2 text-sm font-medium text-white hover:bg-blue-600"
+          type="button"
+          onClick={handleSave}
+          disabled={isUpdatingProfile}
+          className="flex items-center gap-2 rounded-lg bg-blue-500 px-5 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:opacity-60"
         >
           <SaveIcon />
-          Save Changes
+          {isUpdatingProfile ? "Saving..." : "Save Changes"}
         </button>
       </div>
     </div>

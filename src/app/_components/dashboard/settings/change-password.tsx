@@ -1,14 +1,67 @@
 "use client";
 
 import { useState } from "react";
+import { useChangePasswordMutation } from "@/store/authApi";
 
-export default function ChangePassword() {
-  const [current, setCurrent] = useState("12345");
-  const [newPass, setNewPass] = useState("12345");
-  const [confirm, setConfirm] = useState("12345");
+type Props = {
+  onSaved?: () => void;
+};
+
+export default function ChangePassword({ onSaved }: Props) {
+  const [current, setCurrent] = useState("");
+  const [newPass, setNewPass] = useState("");
+  const [confirm, setConfirm] = useState("");
   const [showCurrent, setShowCurrent] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [feedback, setFeedback] = useState<{ type: "error" | "success"; message: string } | null>(null);
+  const [changePassword, { isLoading }] = useChangePasswordMutation();
+
+  const handleSubmit = async () => {
+    setFeedback(null);
+
+    if (!current || !newPass || !confirm) {
+      setFeedback({ type: "error", message: "All password fields are required." });
+      return;
+    }
+
+    if (newPass !== confirm) {
+      setFeedback({ type: "error", message: "New password and confirm password do not match." });
+      return;
+    }
+
+    try {
+      const response = await changePassword({
+        current_password: current,
+        new_password: newPass,
+      }).unwrap();
+
+      setFeedback({ type: "success", message: response.message || "Password changed successfully." });
+      setCurrent("");
+      setNewPass("");
+      setConfirm("");
+      onSaved?.();
+    } catch (err: unknown) {
+      const apiError = err as {
+        data?: {
+          message?: string;
+          detail?: string;
+          current_password?: string[];
+          new_password?: string[];
+        };
+      };
+
+      setFeedback({
+        type: "error",
+        message:
+          apiError?.data?.message ||
+          apiError?.data?.detail ||
+          apiError?.data?.current_password?.[0] ||
+          apiError?.data?.new_password?.[0] ||
+          "Failed to change password. Please try again.",
+      });
+    }
+  };
 
   return (
     <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white p-6 shadow-sm">
@@ -16,6 +69,18 @@ export default function ChangePassword() {
         <h2 className="text-base font-semibold text-slate-800">Change Password</h2>
         <p className="text-sm text-slate-500">Change your password to keep your account secure.</p>
       </div>
+
+      {feedback ? (
+        <p
+          className={`mb-4 rounded-lg px-3 py-2 text-xs font-medium ${
+            feedback.type === "success"
+              ? "border border-emerald-200 bg-emerald-50 text-emerald-700"
+              : "border border-rose-200 bg-rose-50 text-rose-600"
+          }`}
+        >
+          {feedback.message}
+        </p>
+      ) : null}
 
       <div className="space-y-4 max-w-sm">
         {/* Current Password */}
@@ -82,8 +147,13 @@ export default function ChangePassword() {
         </div>
       </div>
 
-      <button className="mt-5 rounded-lg bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 active:scale-95 transition">
-        Change Password
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={isLoading}
+        className="mt-5 rounded-lg bg-blue-500 px-6 py-2.5 text-sm font-semibold text-white hover:bg-blue-600 active:scale-95 transition disabled:cursor-not-allowed disabled:opacity-60"
+      >
+        {isLoading ? "Changing..." : "Change Password"}
       </button>
     </div>
   );

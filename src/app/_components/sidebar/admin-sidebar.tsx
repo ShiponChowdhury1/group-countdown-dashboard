@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAppDispatch } from "@/store/hooks";
+import { logout } from "@/store/authSlice";
+import { authApi } from "@/store/authApi";
 import {
 	Bell,
 	ChevronLeft,
@@ -35,6 +38,7 @@ export default function AdminSidebar({
 	onToggleCollapse,
 }: AdminSidebarProps) {
 	const router = useRouter();
+	const dispatch = useAppDispatch();
 	const [logoutModal, setLogoutModal] = useState(false);
 	const toggleLabel = isCollapsed ? "Expand sidebar" : "Collapse sidebar";
 
@@ -178,6 +182,8 @@ export default function AdminSidebar({
 				open={logoutModal}
 				onClose={() => setLogoutModal(false)}
 				onConfirm={() => {
+					dispatch(logout());
+					dispatch(authApi.util.resetApiState());
 					setLogoutModal(false);
 					router.push("/admin-login");
 				}}

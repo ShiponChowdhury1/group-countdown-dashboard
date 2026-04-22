@@ -21,6 +21,7 @@ type FormFieldProps = {
   rightElement?: React.ReactNode;
   value?: string;
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
   inputClassName?: string;
 };
 
@@ -70,6 +71,7 @@ export function FormField({
   rightElement,
   value,
   onChange,
+  onKeyDown,
   inputClassName,
 }: FormFieldProps) {
   const leftPadding = leftElement ? "pl-11" : "pl-4";
@@ -92,6 +94,7 @@ export function FormField({
           placeholder={placeholder}
           value={value}
           onChange={onChange}
+          onKeyDown={onKeyDown}
           className={`w-full rounded-xl border border-slate-200 bg-white/80 py-3 text-sm text-slate-900 shadow-sm outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-200 ${leftPadding} ${rightPadding} ${inputClassName ?? ""}`}
         />
         {rightElement ? (

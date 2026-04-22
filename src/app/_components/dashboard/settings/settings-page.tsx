@@ -20,7 +20,7 @@ export default function SettingsPage() {
         <section className="mt-6 space-y-6">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
             <PersonalDetails onSaved={() => setSuccessModal(true)} />
-            <ChangePassword />
+            <ChangePassword onSaved={() => setSuccessModal(true)} />
           </div>
           <LegalSection />
         </section>
