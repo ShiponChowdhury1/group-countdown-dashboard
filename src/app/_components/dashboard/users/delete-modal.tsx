@@ -1,10 +1,11 @@
 type Props = {
   open: boolean;
+  loading?: boolean;
   onClose: () => void;
   onConfirm: () => void;
 };
 
-export default function DeleteModal({ open, onClose, onConfirm }: Props) {
+export default function DeleteModal({ open, loading = false, onClose, onConfirm }: Props) {
   if (!open) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
@@ -20,11 +21,19 @@ export default function DeleteModal({ open, onClose, onConfirm }: Props) {
         <h2 className="text-2xl font-bold text-slate-900">Delete?</h2>
         <p className="mt-2 text-slate-500">Are you sure you want to delete?</p>
         <div className="mt-6 flex gap-3">
-          <button onClick={onClose} className="flex-1 rounded-full border border-slate-200 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50">
+          <button
+            onClick={onClose}
+            disabled={loading}
+            className="flex-1 rounded-full border border-slate-200 py-2.5 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
             No, Cancel
           </button>
-          <button onClick={onConfirm} className="flex-1 rounded-full bg-red-500 py-2.5 text-sm font-medium text-white hover:bg-red-600">
-            Yes, Delete
+          <button
+            onClick={onConfirm}
+            disabled={loading}
+            className="flex-1 rounded-full bg-red-500 py-2.5 text-sm font-medium text-white hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {loading ? "Deleting..." : "Yes, Delete"}
           </button>
         </div>
       </div>

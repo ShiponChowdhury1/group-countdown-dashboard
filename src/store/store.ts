@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer, { initialAuthState, AuthState } from "./authSlice";
 import { authApi } from "./authApi";
+import { dashboardUsersApi } from "./dashboardUsersApi";
 
 /**
  * Factory so StoreProvider can inject the localStorage-preloaded auth state
@@ -12,12 +13,16 @@ export function makeStore(preloadedAuth: Partial<AuthState> = {}) {
     reducer: {
       auth: authReducer,
       [authApi.reducerPath]: authApi.reducer,
+      [dashboardUsersApi.reducerPath]: dashboardUsersApi.reducer,
     },
     preloadedState: {
       auth: { ...initialAuthState, ...preloadedAuth },
     },
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(authApi.middleware),
+      getDefaultMiddleware().concat(
+        authApi.middleware,
+        dashboardUsersApi.middleware
+      ),
   });
 }
 

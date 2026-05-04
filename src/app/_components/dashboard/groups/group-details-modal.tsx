@@ -22,12 +22,12 @@ export default function GroupDetailsModal({ open, group, onClose }: Props) {
           <X className="h-5 w-5" strokeWidth={2} />
         </button>
 
-        <h2 className="text-lg font-bold text-slate-900">Group Details</h2>
-        <p className="text-sm text-slate-500">View selected group information</p>
+        <h2 className="text-lg font-bold text-slate-900">Event Details</h2>
+        <p className="text-sm text-slate-500">View selected event information</p>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <DetailField label="Group Name" value={group.name} />
-          <DetailField label="Group ID" value={group.id} />
+          <DetailField label="Event Name" value={group.name} />
+          <DetailField label="Event ID" value={group.id} />
           <DetailField label="Created By" value={group.createdBy} icon={<UserRound className="h-4 w-4" strokeWidth={1.8} />} />
           <DetailField label="Members" value={String(group.members)} icon={<Users className="h-4 w-4" strokeWidth={1.8} />} />
         </div>

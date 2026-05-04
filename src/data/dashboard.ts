@@ -1,12 +1,12 @@
 export type SidebarItem = {
 	label: string;
-	iconKey: "dashboard" | "users" | "groups" | "subscriptions" | "notifications" | "settings";
+	iconKey: "dashboard" | "users" | "event" | "subscriptions" | "notifications" | "settings";
 };
 
 export type StatCardItem = {
 	title: string;
 	value: string;
-	iconKey: "users" | "groups" | "tasks" | "subscriptions" | "revenue";
+	iconKey: "users" | "event" | "tasks" | "subscriptions" | "revenue";
 	iconColor: string;
 };
 
@@ -18,7 +18,7 @@ export type GrowthPoint = {
 export const navItems: SidebarItem[] = [
 	{ label: "Dashboard", iconKey: "dashboard" },
 	{ label: "Users", iconKey: "users" },
-	{ label: "Groups", iconKey: "groups" },
+	{ label: "Events", iconKey: "event" },
 	{ label: "Subscriptions", iconKey: "subscriptions" },
 	{ label: "Notifications", iconKey: "notifications" },
 	{ label: "Settings", iconKey: "settings" },
@@ -26,7 +26,7 @@ export const navItems: SidebarItem[] = [
 
 export const statsCards: StatCardItem[] = [
 	{ title: "Total Users", value: "750", iconKey: "users", iconColor: "#3b82f6" },
-	{ title: "Active Groups", value: "234", iconKey: "groups", iconColor: "#22c55e" },
+	{ title: "Active Events", value: "234", iconKey: "event", iconColor: "#22c55e" },
 	{ title: "Total Tasks", value: "1,847", iconKey: "tasks", iconColor: "#f59e0b" },
 	{
 		title: "Active Subscriptions",

@@ -6,7 +6,12 @@ import UsersTable from "@/app/_components/dashboard/users/users-table";
 import DeleteModal from "@/app/_components/dashboard/users/delete-modal";
 import SuspendModal from "@/app/_components/dashboard/users/suspend-modal";
 import UserDetailsModal from "@/app/_components/dashboard/users/user-details-modal";
-import { usersData } from "@/data/users";
+import {
+  DashboardUserDto,
+  useDeleteDashboardUserMutation,
+  useGetDashboardUsersQuery,
+  useSetDashboardUserStatusMutation,
+} from "@/store/dashboardUsersApi";
 
 export type User = {
   id: string;
@@ -20,8 +25,32 @@ export type User = {
   avatarUrl?: string;
 };
 
+function normalizeImageUrl(url: string | null | undefined) {
+  if (!url) return undefined;
+  return url.replace("http://", "https://");
+}
+
+function mapApiUser(user: DashboardUserDto): User {
+  const normalizedSubscription =
+    user.subscription.toLowerCase() === "premium" ? "Premium" : "Free";
+
+  const normalizedStatus =
+    user.status.toLowerCase() === "active" ? "Active" : "Inactive";
+
+  return {
+    id: user.id,
+    name: user.name,
+    email: user.email,
+    groups: user.groups,
+    subscription: normalizedSubscription,
+    status: normalizedStatus,
+    avatarUrl: normalizeImageUrl(user.image),
+  };
+}
+
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>(usersData);
+  const [deleteError, setDeleteError] = useState("");
+  const [statusError, setStatusError] = useState("");
   const [deleteModal, setDeleteModal] = useState<{ open: boolean; userId: string | null }>({ open: false, userId: null });
   const [suspendModal, setSuspendModal] = useState<{ open: boolean; userId: string | null; action: "suspend" | "active" }>({ open: false, userId: null, action: "suspend" });
   const [detailsModal, setDetailsModal] = useState<{ open: boolean; userId: string | null }>({ open: false, userId: null });
@@ -32,7 +61,22 @@ export default function UsersPage() {
   const [filterStatus, setFilterStatus] = useState<"All" | "Active" | "Inactive">("All");
   const [showFilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const usersPerPage = 10;
+
+  const {
+    data: usersResponse,
+    isLoading,
+    isFetching,
+    error,
+    refetch,
+  } = useGetDashboardUsersQuery({ page: currentPage });
+  const [deleteDashboardUser, { isLoading: isDeletingUser }] =
+    useDeleteDashboardUserMutation();
+  const [setDashboardUserStatus, { isLoading: isUpdatingUserStatus }] =
+    useSetDashboardUserStatusMutation();
+
+  const users = useMemo(() => {
+    return (usersResponse?.users ?? []).map(mapApiUser);
+  }, [usersResponse]);
 
   const filteredUsers = useMemo(() => {
     return users.filter((u) => {
@@ -46,25 +90,66 @@ export default function UsersPage() {
     });
   }, [users, search, filterSubscription, filterStatus]);
 
-  const totalPages = Math.max(1, Math.ceil(filteredUsers.length / usersPerPage));
-  const safeCurrentPage = Math.min(currentPage, totalPages);
-  const paginatedUsers = useMemo(() => {
-    const start = (safeCurrentPage - 1) * usersPerPage;
-    return filteredUsers.slice(start, start + usersPerPage);
-  }, [filteredUsers, safeCurrentPage]);
+  const totalPages = Math.max(1, usersResponse?.total_pages ?? 1);
+  const safeCurrentPage = usersResponse?.current_page ?? currentPage;
+  const paginatedUsers = filteredUsers;
 
-  const handleDelete = (userId: string) => {
-    setUsers((prev) => prev.filter((u) => u.id !== userId));
-    setDeleteModal({ open: false, userId: null });
+  const errorMessage = useMemo(() => {
+    if (!error) return "";
+    const queryError = error as {
+      data?: { message?: string; detail?: string };
+      status?: string | number;
+    };
+
+    return (
+      queryError?.data?.message ||
+      queryError?.data?.detail ||
+      `Failed to load users (status: ${String(queryError?.status ?? "unknown")}).`
+    );
+  }, [error]);
+
+  const handleDelete = async (userId: string) => {
+    setDeleteError("");
+
+    try {
+      await deleteDashboardUser(userId).unwrap();
+      setDeleteModal({ open: false, userId: null });
+      refetch();
+    } catch (err: unknown) {
+      const apiError = err as {
+        data?: { message?: string; detail?: string };
+      };
+
+      setDeleteError(
+        apiError?.data?.message ||
+          apiError?.data?.detail ||
+          "Failed to delete user. Please try again."
+      );
+    }
   };
 
-  const handleSuspend = (userId: string, action: "suspend" | "active") => {
-    setUsers((prev) =>
-      prev.map((u) =>
-        u.id === userId ? { ...u, status: action === "suspend" ? "Inactive" : "Active" } : u
-      )
-    );
-    setSuspendModal({ open: false, userId: null, action: "suspend" });
+  const handleSuspend = async (userId: string, action: "suspend" | "active") => {
+    setStatusError("");
+
+    try {
+      await setDashboardUserStatus({
+        id: userId,
+        is_active: action === "active",
+      }).unwrap();
+
+      setSuspendModal({ open: false, userId: null, action: "suspend" });
+      refetch();
+    } catch (err: unknown) {
+      const apiError = err as {
+        data?: { message?: string; detail?: string };
+      };
+
+      setStatusError(
+        apiError?.data?.message ||
+          apiError?.data?.detail ||
+          "Failed to update user status. Please try again."
+      );
+    }
   };
 
   const selectedUser = users.find((u) => u.id === detailsModal.userId) ?? null;
@@ -74,7 +159,9 @@ export default function UsersPage() {
       <div className="px-4 sm:px-6 pt-4">
         <section className="mt-2">
           <h1 className="text-[22px] font-bold text-slate-900">Users Management</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage all registered users</p>
+          <p className="mt-1 text-sm text-slate-500">
+            Manage all registered users ({usersResponse?.total ?? users.length})
+          </p>
         </section>
 
         {/* Search + Filter Bar */}
@@ -170,6 +257,37 @@ export default function UsersPage() {
         </section>
 
         <section className="mt-4">
+          {deleteError ? (
+            <div className="mb-3 rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm text-rose-700">
+              {deleteError}
+            </div>
+          ) : null}
+
+          {statusError ? (
+            <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-2.5 text-sm text-amber-700">
+              {statusError}
+            </div>
+          ) : null}
+
+          {errorMessage ? (
+            <div className="mb-3 flex items-center justify-between rounded-xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm text-rose-700">
+              <span>{errorMessage}</span>
+              <button
+                type="button"
+                onClick={() => refetch()}
+                className="rounded-lg border border-rose-200 bg-white px-3 py-1 text-xs font-semibold text-rose-600 transition hover:bg-rose-100"
+              >
+                Retry
+              </button>
+            </div>
+          ) : null}
+
+          {isLoading ? (
+            <div className="mb-3 rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+              Loading users list...
+            </div>
+          ) : null}
+
           <UsersTable
             users={paginatedUsers}
             onDelete={(id) => setDeleteModal({ open: true, userId: id })}
@@ -177,7 +295,13 @@ export default function UsersPage() {
             onDetails={(id) => setDetailsModal({ open: true, userId: id })}
           />
 
-          <div className="mt-4 flex flex-wrap items-center justify-end gap-2">
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs text-slate-400">
+              Page {safeCurrentPage} of {totalPages}
+              {isFetching ? " • refreshing..." : ""}
+            </p>
+
+            <div className="flex flex-wrap items-center gap-2">
             <button
               type="button"
               onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
@@ -214,26 +338,36 @@ export default function UsersPage() {
             >
               Next
             </button>
+            </div>
           </div>
         </section>
       </div>
 
       <DeleteModal
         open={deleteModal.open}
-        onClose={() => setDeleteModal({ open: false, userId: null })}
+        loading={isDeletingUser}
+        onClose={() => {
+          setDeleteError("");
+          setDeleteModal({ open: false, userId: null });
+        }}
         onConfirm={() => deleteModal.userId && handleDelete(deleteModal.userId)}
       />
 
       <SuspendModal
         open={suspendModal.open}
+        loading={isUpdatingUserStatus}
         action={suspendModal.action}
-        onClose={() => setSuspendModal({ open: false, userId: null, action: "suspend" })}
+        onClose={() => {
+          setStatusError("");
+          setSuspendModal({ open: false, userId: null, action: "suspend" });
+        }}
         onConfirm={() => suspendModal.userId && handleSuspend(suspendModal.userId, suspendModal.action)}
       />
 
       <UserDetailsModal
         open={detailsModal.open}
-        user={selectedUser}
+        userId={detailsModal.userId}
+        fallbackUser={selectedUser}
         onClose={() => setDetailsModal({ open: false, userId: null })}
       />
     </>

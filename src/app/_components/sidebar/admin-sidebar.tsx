@@ -193,12 +193,12 @@ export default function AdminSidebar({
 }
 
 function getSidebarIcon(
-	key: "dashboard" | "users" | "groups" | "subscriptions" | "notifications" | "settings"
+	key: "dashboard" | "users" | "event" | "subscriptions" | "notifications" | "settings"
 ) {
 	const cls = "h-5 w-5";
 	if (key === "dashboard") return <Grid3X3 className={cls} strokeWidth={1.8} />;
 	if (key === "users") return <Users className={cls} strokeWidth={1.8} />;
-	if (key === "groups") return <Folder className={cls} strokeWidth={1.8} />;
+	if (key === "event") return <Folder className={cls} strokeWidth={1.8} />;
 	if (key === "subscriptions") return <WalletCards className={cls} strokeWidth={1.8} />;
 	if (key === "notifications") return <Bell className={cls} strokeWidth={1.8} />;
 	return <Settings className={cls} strokeWidth={1.8} />;

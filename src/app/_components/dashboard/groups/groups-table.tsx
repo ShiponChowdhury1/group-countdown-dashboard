@@ -11,13 +11,13 @@ export default function GroupsTable({ groups, onDelete, onDetails }: Props) {
   return (
     <div className="overflow-hidden rounded-[14px] border border-slate-200 bg-white shadow-sm">
       <div className="px-5 py-4">
-        <h2 className="text-sm font-semibold text-slate-700">All Groups ({groups.length})</h2>
+        <h2 className="text-sm font-semibold text-slate-700">All Events ({groups.length})</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-y border-slate-100 bg-slate-50/60">
-              <th className="px-5 py-3 text-left font-medium text-slate-500">Group Name</th>
+              <th className="px-5 py-3 text-left font-medium text-slate-500">Event Name</th>
               <th className="px-5 py-3 text-left font-medium text-slate-500">Members</th>
               <th className="px-5 py-3 text-left font-medium text-slate-500">Event Date</th>
               <th className="px-5 py-3 text-left font-medium text-slate-500">Created By</th>

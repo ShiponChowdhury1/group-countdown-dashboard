@@ -62,8 +62,8 @@ export default function GroupsPage() {
     <>
       <div className="px-4 sm:px-6 pt-4">
         <section className="mt-2">
-          <h1 className="text-[22px] font-bold text-slate-900">Groups Management</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage all groups and events</p>
+          <h1 className="text-[22px] font-bold text-slate-900">Events Management</h1>
+          <p className="mt-1 text-sm text-slate-500">Manage all events and participants</p>
         </section>
 
         {/* Search + Filter */}
@@ -76,7 +76,7 @@ export default function GroupsPage() {
               type="text"
               value={search}
               onChange={(e) => { setSearch(e.target.value); setCurrentPage(1); }}
-              placeholder="Search by group name or creator…"
+              placeholder="Search by event name or creator…"
               className="w-full rounded-xl border border-slate-200 bg-white py-2.5 pl-10 pr-4 text-sm text-slate-700 shadow-sm outline-none transition focus:border-blue-400 focus:ring-2 focus:ring-blue-100"
             />
           </div>
